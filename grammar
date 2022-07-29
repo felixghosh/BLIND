@@ -1,0 +1,49 @@
+program -> stmt_list
+
+stmt_list -> eps | stmt_list stmt
+stmt -> 	ass_stmt
+	|	var_decl_stmt
+	| 	if_stmt
+	|	while_stmt
+	|	return_stmt
+
+ass_stmt -> ID ASS expr SEMI
+var_delc_stmt -> 	INT ID SEMI
+				|	INT ID ASS expr SEMI
+if_stmt -> IF LPAREN expr RPAREN LBRACE stmt_list RBRACE
+while_stmt -> WHILE LPAREN expr RPAREN LBRACE stmt_list RBRACE
+return_stmt -> RET expr
+
+expr -> comp_expr | artm
+artm -> term_expr | term
+term -> factor_exp | factor
+factor -> paren_exp | ID | NUM
+
+comp_expr ->	eq_expr
+			|	not_eq_expr
+			|	lt_expr
+			|	lte_expr
+			|	gt_expr
+			|	gte_expr
+eq_expr -> artm EQ artm
+not_eq_expr -> artm NOTEQ artm
+lt_expr -> artm LT artm
+lte_expr -> artm LTE artm
+gt_expr -> artm GT artm
+gte_expr -> artm GTE artm
+
+term_exp ->		add_expr
+			|	sub_expr
+add_expr -> artm ADD term
+sub_expr -> armt SUB term
+
+factor_expr ->		mul_expr
+				|	div_expr
+				|	mod_expr
+				|	neg_expr
+mul_expr -> term MUL factor
+div_expr -> term DIV factor
+mod_expr -> term MOD factor
+neg_expr -> SUB factor
+
+paren_exp -> LPAREN expr RPAREN
