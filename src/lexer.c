@@ -13,7 +13,7 @@
 short is_final[38] = {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1};
 
 token_t** lex(char* program, int length){
-    token_t** tokens = calloc(MAXTOKENS, sizeof(token_t*));
+    token_t** tokens = malloc(MAXTOKENS * sizeof(token_t*));
     int n_tokens, pos = 0;
     int current_state = 0;
     int last_final_state, last_final_pos = 0;
@@ -22,6 +22,7 @@ token_t** lex(char* program, int length){
     while(pos < length){
         match = false;
         int c = program[pos++];
+        //printf("pos: %d state: %d c: %d\n", pos, current_state, c);
         switch(current_state){
             case 0:
                 if(c == 'i'){
@@ -65,7 +66,8 @@ token_t** lex(char* program, int length){
                 } else if(isalpha(c)){
                     current_state = 37;
                 } else if(isspace(c)){
-                    //ignore
+                    last_final_pos++;
+                    continue;
                 } else{
                     printf("ILLEGAL CHARACTER ENCOUNTERED! c = %d\n", c);
                 }
@@ -229,7 +231,11 @@ token_t** lex(char* program, int length){
                 break;
                
         }
-        
+
+        //printf("%d\n", pos);
+        if(pos == length)
+            match = true;
+
         if(is_final[current_state])
                 last_final_state = current_state;
 
@@ -366,10 +372,6 @@ token_t** lex(char* program, int length){
         }
         
     }
-    for(int i = 0; i < n_tokens; i++){
-        printf("%s (%s) ", tokens[i]->type, tokens[i]->value);
-    }
-    printf("\n");
     return tokens;
 }
 
@@ -381,13 +383,18 @@ int main(){
     while((c = getchar()) != EOF)   //Read program
        program[i++] = c;
 
-    printf("Program: %s\n", program);
 
     token_t** tokens = lex(program, i);
-
-    printf("%s\n", tokens[5]->type);
+    while(*tokens){
+        printf("%s ", (*tokens)->type);
+        tokens++;
+    }
     
-
     return 0;
 }
 
+
+
+/*
+3 parse last char
+*/
