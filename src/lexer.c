@@ -405,9 +405,3 @@ int main(){
     
     return 0;
 }
-
-
-
-/*
-3 parse last char
-*/
