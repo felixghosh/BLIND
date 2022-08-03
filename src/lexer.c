@@ -19,10 +19,16 @@ token_t** lex(char* program, int length){
     int last_final_state, last_final_pos = 0;
     bool match;
 
-    while(pos < length){
+    while(pos <= length){
         match = false;
-        int c = program[pos++];
-        //printf("pos: %d state: %d c: %d\n", pos, current_state, c);
+        int c;
+        if(pos == length){
+            c = program[pos++-1];
+            match = true;
+        } 
+        else c = program[pos++]; 
+        
+        printf("pos: %d state: %d c: %c\n", pos, current_state, c);
         switch(current_state){
             case 0:
                 if(c == 'i'){
@@ -228,19 +234,18 @@ token_t** lex(char* program, int length){
                 break;
             case 38:
                 match = true;
-                break;
-               
+                break;     
         }
-
-        //printf("%d\n", pos);
-        if(pos == length)
-            match = true;
+        
+        
 
         if(is_final[current_state])
                 last_final_state = current_state;
 
         if(match){
-            pos--;
+            printf("match! cs: %d lfs: %d\n", current_state, last_final_state);
+            if (pos <= length)
+                pos--;
             int len = pos - last_final_pos;
             
             char type[7] = {0};
@@ -365,6 +370,7 @@ token_t** lex(char* program, int length){
                 value[i] = program[last_final_pos+i];
             }
             last_final_pos = pos;
+            printf("TYPE: %s\n", type);
 
             token_t* t = new_token_t(type, value);
             tokens[n_tokens++] = t;
@@ -385,9 +391,16 @@ int main(){
 
 
     token_t** tokens = lex(program, i);
-    while(*tokens){
-        printf("%s ", (*tokens)->type);
-        tokens++;
+    token_t** t = tokens;
+    while(*t){
+        printf("%s ", (*t)->type);
+        t++;
+    }
+    printf("\n");
+    t = tokens;
+    while(*t){
+        printf("%s ", (*t)->value);
+        t++;
     }
     
     return 0;
