@@ -1,9 +1,9 @@
 #!/bin/bash
 
-for f in tests/*/*/*.i; do
-    pre=${f%.i}
-    expected=$pre.ex
-    out=$pre.o
+for f in tests/*/*/i; do
+    pre=${f%i}
+    expected="${pre}ex"
+    out="${pre}o"
     echo "Cheking $f ..."
     make lexer < $f > $out
     if diff -q $out $expected
