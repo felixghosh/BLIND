@@ -5,30 +5,39 @@
 #include <string.h>
 #include <unistd.h>
 #include "token.h"
+#include "printd.h"
 
 
 #define PROGSIZE 65536   //32 bits
 #define MAXTOKENS  4096     //12 bits
 
+
 short is_final[38] = {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1};
 
 token_t** lex(char* program, int length){
     token_t** tokens = malloc(MAXTOKENS * sizeof(token_t*));
-    int n_tokens, pos = 0;
+    int n_tokens = 0;
+    int pos = 0;
     int current_state = 0;
     int last_final_state, last_final_pos = 0;
     bool match;
+
+    printd("len: %d\n", length);
 
     while(pos <= length){
         match = false;
         int c;
         if(pos == length){
-            c = program[pos++-1];
+            c = ' ';
             match = true;
-        } 
-        else c = program[pos++]; 
+            pos++;
+        }
+        else{
+            c = program[pos++]; 
+        }
         
-        printf("pos: %d state: %d c: %c\n", pos, current_state, c);
+        
+        printd("pos: %d state: %d c: %c\n", pos, current_state, c);
         switch(current_state){
             case 0:
                 if(c == 'i'){
@@ -36,7 +45,7 @@ token_t** lex(char* program, int length){
                 } else if(c == ';'){
                     current_state = 6;
                 } else if(c == '='){
-                    current_state = 7;
+                    current_state = 23;
                 } else if(c == '('){
                     current_state = 8;
                 } else if(c == ')'){
@@ -49,8 +58,6 @@ token_t** lex(char* program, int length){
                     current_state = 12;
                 } else if(c == 'r'){
                     current_state = 17;
-                } else if(c == '='){
-                    current_state = 23;
                 } else if(c == '!'){
                     current_state = 25;
                 } else if(c == '<'){
@@ -237,19 +244,18 @@ token_t** lex(char* program, int length){
                 break;     
         }
         
-        
 
         if(is_final[current_state])
                 last_final_state = current_state;
 
         if(match){
-            printf("match! cs: %d lfs: %d\n", current_state, last_final_state);
+            printd("match! cs: %d lfs: %d pos: %d\n", current_state, last_final_state, pos);
             if (pos <= length)
                 pos--;
             int len = pos - last_final_pos;
             
-            char type[7] = {0};
-            char value[1024] = {0};
+            char* type = calloc(7, sizeof(char));
+            char* value = calloc(1024, sizeof(char));
             
             switch(last_final_state){
                 case 1:
@@ -269,9 +275,6 @@ token_t** lex(char* program, int length){
                     break;
                 case 6:
                     strcpy(type, "SEMI");
-                    break;
-                case 7:
-                    strcpy(type, "ASS");
                     break;
                 case 8:
                     strcpy(type, "LPAREN");
@@ -370,7 +373,7 @@ token_t** lex(char* program, int length){
                 value[i] = program[last_final_pos+i];
             }
             last_final_pos = pos;
-            printf("TYPE: %s\n", type);
+            printd("TYPE: %s\n", type);
 
             token_t* t = new_token_t(type, value);
             tokens[n_tokens++] = t;
@@ -393,7 +396,7 @@ int main(){
     token_t** tokens = lex(program, i);
     token_t** t = tokens;
     while(*t){
-        printf("%s ", (*t)->type);
+        printf("%s ", (*t)->type, (*t)->value);
         t++;
     }
     printf("\n");
