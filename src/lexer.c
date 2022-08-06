@@ -4,12 +4,9 @@
 #include <ctype.h>
 #include <string.h>
 #include <unistd.h>
-#include "token.h"
 #include "printd.h"
-
-
-#define PROGSIZE 65536   //32 bits
-#define MAXTOKENS  4096     //12 bits
+#include "lexer.h"
+#include "token.h"
 
 
 short is_final[38] = {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1};
@@ -382,29 +379,4 @@ token_t** lex(char* program, int length){
         
     }
     return tokens;
-}
-
-int main(){
-    char program[PROGSIZE] = {0};
-    int c;
-    int i = 0;
-
-    while((c = getchar()) != EOF)   //Read program
-       program[i++] = c;
-
-
-    token_t** tokens = lex(program, i);
-    token_t** t = tokens;
-    while(*t){
-        printf("%s ", (*t)->type, (*t)->value);
-        t++;
-    }
-    printf("\n");
-    t = tokens;
-    while(*t){
-        printf("%s ", (*t)->value);
-        t++;
-    }
-    
-    return 0;
 }

@@ -5,7 +5,7 @@ for f in tests/*/*/i; do
     expected="${pre}ex"
     out="${pre}o"
     echo "Cheking $f ..."
-    make lexer < $f > $out
+    make test-lexer < $f > $out
     if diff -q $out $expected
     then
         echo "$(tput setaf 2)Success $(tput setaf 7)"

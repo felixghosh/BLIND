@@ -5,14 +5,14 @@ stmt -> 	ass_stmt
 	|	var_decl_stmt
 	| 	if_stmt
 	|	while_stmt
-	|	return_stmt
+	//|	return_stmt
 
 ass_stmt -> ID ASS expr SEMI
 var_delc_stmt -> 	INT ID SEMI
 				|	INT ID ASS expr SEMI
 if_stmt -> IF LPAREN expr RPAREN LBRACE stmt_list RBRACE
 while_stmt -> WHILE LPAREN expr RPAREN LBRACE stmt_list RBRACE
-return_stmt -> RET expr
+//return_stmt -> RET expr
 
 expr -> comp_expr | artm
 artm -> term_expr | term
